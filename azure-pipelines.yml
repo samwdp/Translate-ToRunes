@@ -1,0 +1,42 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  paths:
+    include:
+    - "*.psm1"
+    - "*.psd1"
+    exclude:
+      - README
+      - "*.yaml"
+      - .gitignore
+
+pool:
+  vmImage: 'windows-2019'
+
+steps:
+- task: GitVersion@5
+  inputs:
+    runtime: 'core'
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    Contents: |
+     *.psm1
+     *.psd1
+    TargetFolder: '$(Build.ArtifactStagingDirectory)\Translate-ToRunes'
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)\Translate-ToRunes'
+    artifact: Translate-ToRunes
+- task: richiebzzzt.PublishPackageToPowerShellGallery.Publish-Package-To-PowerShell-Gallery.PublishPackageToPowerShellGallery@0
+  displayName: 'Azure DevOps PowerShell Gallery Packager '
+  inputs:
+    apiKey: oy2askpvq5wuevcw7rqqdcu5chaqdymepnjxof6idb3gjm
+    path: '$(Build.ArtifactStagingDirectory)\Translate-ToRunes'
+    setVersionNumberInManifest: true
+    psd1FileName: 'Translate-ToRunes.psd1'
+    version: $(GitVersion.NuGetVersion)
