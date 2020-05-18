@@ -4,7 +4,14 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+  paths:
+    include:
+    - "*.psm1"
+    - "*.psd1"
+    exclude:
+      - README
+      - "*.yaml"
+      - .gitignore
 
 pool:
   vmImage: 'windows-2019'
