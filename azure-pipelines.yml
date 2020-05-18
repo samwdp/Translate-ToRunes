@@ -9,7 +9,7 @@ trigger:
     - "*.psm1"
     - "*.psd1"
     exclude:
-      - README
+      - README.md
       - "*.yaml"
       - .gitignore
 
@@ -20,6 +20,7 @@ steps:
 - task: GitVersion@5
   inputs:
     runtime: 'core'
+    configFilePath: 'GitVersion.yaml'
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
   inputs:
